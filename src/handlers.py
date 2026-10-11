@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 from src.keyboards import reply_keyboard, inline_keyboard
 from src.questions import QUESTIONS
+from db.users import create_user
 
 
 router = Router()
@@ -17,11 +18,15 @@ class Quiz(StatesGroup):
 
 @router.message(CommandStart())
 async def cmd_start(message: Message):
+    user = create_user(
+        telegram_id=message.from_user.id,
+        username=message.from_user.full_name or "Аноним"
+    )
     await message.answer(
         f"Привет, {message.from_user.full_name}! Я твой первый бот.",
         reply_markup=reply_keyboard
     )
-    print(f"Пользовтель {message.from_user.full_name}, с никнеймом {message.from_user.username} отправил команду /start")
+    print(f"Добавился новый пользователь {user}")
 
 
 @router.message(Command('help'))

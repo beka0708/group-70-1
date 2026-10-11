@@ -2,6 +2,11 @@
 # QUESTIONS - вопросы и ответы
 # RESULTS - результаты каждого пользователя
 
+# ------------
+
+# CRUD - CREATE, READ, UPDATE, DELETE
+
+
 
 CREATE_USERS_TABLE = '''
     CREATE TABLE IF NOT EXISTS users (
@@ -30,3 +35,15 @@ CREATE_RESULTS_TABLE = '''
         FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE
     )
 '''
+
+
+# --USERS--
+
+GET_USER_BY_TG_ID = 'SELECT * FROM users WHERE telegram_id = ?'
+INSERT_USER = 'INSERT OR IGNORE INTO users (telegram_id, username) VALUES (?, ?)'
+
+# --QUESTIONS--
+
+GET_ALL_QUESTIONS = 'SELECT * FROM questions'
+GET_QUESTION_BY_ID = 'SELECT * FROM questions WHERE id = ?'
+INSERT_QUESTION = 'INSERT INTO questions(question_text, correct_answer) VALUES(?, ?)'
