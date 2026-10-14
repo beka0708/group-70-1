@@ -47,3 +47,15 @@ INSERT_USER = 'INSERT OR IGNORE INTO users (telegram_id, username) VALUES (?, ?)
 GET_ALL_QUESTIONS = 'SELECT * FROM questions'
 GET_QUESTION_BY_ID = 'SELECT * FROM questions WHERE id = ?'
 INSERT_QUESTION = 'INSERT INTO questions(question_text, correct_answer) VALUES(?, ?)'
+
+
+# -- RESULTS --
+
+INSERT_RESULT = 'INSERT INTO results (user_id, question_id, is_correct) VALUES (?, ?, ?)'
+GET_SCORE_BY_USER_ID = '''
+    SELECT COUNT(*) as total,
+    SUM(is_correct) as correct
+    FROM results
+    WHERE user_id = ?
+'''
+
