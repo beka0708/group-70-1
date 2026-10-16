@@ -1,0 +1,10 @@
+-- database: ./quiz.db
+
+SELECT * FROM questions;
+
+SELECT u.username, q.question_text, r.is_correct
+FROM results AS r
+INNER JOIN users AS u
+    ON u.id = r.user_id
+INNER JOIN questions AS q
+    ON q.id = r.question_id

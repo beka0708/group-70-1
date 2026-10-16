@@ -9,7 +9,7 @@ from src.questions import QUESTIONS
 from db.questions import get_all_questions, get_question
 from db.results import get_score, save_result
 from db.users import create_user, get_user
-
+from db.stats import get_history, get_top, get_hardest_question
 
 router = Router()
 
@@ -47,6 +47,47 @@ async def cmd_score(message: Message):
         await message.answer("Сначала нажми на /start")
     data = get_score(user["id"])
     await message.answer(f"Привет, твой результат:\nВсего вопросов: {data["total"]}\nИз них правильных: {data["correct"]}")
+
+
+@router.message(Command("history"))
+async def cmd_history(message: Message):
+    history = get_history(
+        telegram_id=message.from_user.id,
+        limit=6
+    )
+    if not history:
+        await message.answer("Ты еще не отвечал ни на один вопрос!")
+        return
+    text = 'Последние ответы:\n\n'
+    for i, row in enumerate(history, 1):
+        mark = 'Верно' if row['is_correct'] else 'Неверно'
+        text += f"{i}. {mark} - {row["question_text"]}\n"
+    await message.answer(text)
+
+
+@router.message(Command('top'))
+async def cmd_top(message: Message):
+    players = get_top()
+    if not players:
+        await message.answer("Пока никто не играл!")
+        return
+    text = 'Топ игроков:\n\n'
+    for i, p in enumerate(players, 1):
+        text += f"{i}. {p["username"]} - {p["correct"]}/{p["total"]}\n"
+    await message.answer(text)
+
+
+@router.message(Command('hardest'))
+async def cmd_hardest(message: Message):
+    q = get_hardest_question()
+    if not q:
+        await message.answer("Пока нет данных.")
+        return
+    await message.answer(
+        f"Самый сложный вопрос:\n"
+        f"{q["question_text"]}\n"
+        f"Правильных ответов: {q["success_rate"]}%"
+    )
 
 
 @router.callback_query(F.data == "score")

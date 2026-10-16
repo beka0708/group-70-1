@@ -59,3 +59,41 @@ GET_SCORE_BY_USER_ID = '''
     WHERE user_id = ?
 '''
 
+
+GET_HISTORY = '''
+    SELECT q.question_text, r.is_correct
+    FROM results AS r
+    INNER JOIN questions AS q
+        ON q.id = r.question_id
+    INNER JOIN users AS u
+        ON u.id = r.user_id
+    WHERE u.telegram_id = ?
+    ORDER BY r.id DESC
+    LIMIT ?
+'''
+
+
+GET_TOP = '''
+    SELECT u.username,
+           COUNT(*) AS total,
+           SUM(is_correct) AS correct
+    FROM results AS r
+    INNER JOIN users AS u
+        ON r.user_id = u.id
+    GROUP BY r.user_id
+    ORDER BY correct DESC
+    LIMIT 3
+'''
+
+
+GET_HARDEST = '''
+    SELECT q.question_text,
+           ROUND(AVG(r.is_correct)*100, 1) AS success_rate
+    FROM results AS r
+    INNER JOIN questions AS q
+        ON r.question_id = q.id
+    GROUP BY r.question_id
+    ORDER BY success_rate
+    LIMIT 1
+'''
+
